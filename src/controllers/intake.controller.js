@@ -1,6 +1,6 @@
 import Intake from "../models/intake.models.js";
 import sendToExternalApi from "../service/externalApi.service.js";
-import asyncHandler from "../utils/asynchandler.js";
+import asyncHandler from "../utils/asyncHandler.js";
 import intakeValidationSchema from "../validation/intake.validation.js";
 import { sanitizeInput } from "../utils/sanitize.js";
 
