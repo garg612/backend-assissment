@@ -1,15 +1,14 @@
 import Intake from "../models/intake.models.js";
 import sendToExternalApi from "../service/externalApi.service.js";
-import asyncHandler from "../utils/asyncHandler.js";
+import asyncHandler from "../utils/asynchandler.js";
+import intakeValidationSchema from "../validation/intake.validation.js";
 import { sanitizeInput } from "../utils/sanitize.js";
 
 const createIntake = asyncHandler(async (req, res) => {
 
     // Parse Jotform rawRequest
     const rawRequest = req.body?.rawRequest;
-
     let jotformData = req.body;
-
     if (typeof rawRequest === "string") {
 
         try {
@@ -29,7 +28,6 @@ const createIntake = asyncHandler(async (req, res) => {
 
     // Extract Full Name
     const fullNameParts = jotformData?.q1_name || {};
-
     const fullName = [
         fullNameParts.first,
         fullNameParts.last
@@ -78,17 +76,13 @@ const createIntake = asyncHandler(async (req, res) => {
     };
 
     // Validate Required Fields
-    if (!sanitizedData.fullName || !sanitizedData.email) {
-
+    const { error } = intakeValidationSchema.validate(sanitizedData);
+    if (error) {
         return res.status(400).json({
-
             success: false,
-
             message:
-                "Validation error: fullName and email are required"
-
+                "Validation error: " + error.details[0].message
         });
-
     }
 
     // Store in MongoDB
